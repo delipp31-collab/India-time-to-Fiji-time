@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c1729"><title>India to Fiji Time Converter</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#17243a;background:#0c1729}*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 15%,#1a3151,#101d32 48%,#0b1424);padding:42px 18px 30px}
+.wrap{width:min(100%,900px);margin:auto}.hero{text-align:center;color:#f7f9ff;padding:26px 12px 52px}
+.brand{font-size:25px;font-weight:800;letter-spacing:.12em;color:#dbe9ff}.brand span{color:#65baf4;padding:0 14px}
+.eyebrow{margin-top:44px;color:#91a4bf;font-size:17px;letter-spacing:.24em}
+h1{font-size:clamp(42px,8vw,72px);letter-spacing:-.055em;line-height:1.05;margin:22px 0;font-weight:800}h1 span{color:#6bc7f2}
+.subtitle{max-width:700px;margin:auto;color:#a9b7ca;font-size:clamp(18px,3vw,25px);line-height:1.7}
+.panel{background:#fff;border-radius:42px;padding:clamp(24px,6vw,56px);box-shadow:0 24px 65px #0005}
+label{display:block;color:#667890;font-weight:800;letter-spacing:.13em;font-size:16px;margin:0 0 15px}
+.field{margin-bottom:38px}input{width:100%;height:100px;border:2px solid #e0e7f1;border-radius:24px;background:#fbfcfe;padding:0 28px;color:#1c2a40;font-size:clamp(22px,4vw,32px);font-family:inherit;outline:none}
+input:focus{border-color:#75aef1;box-shadow:0 0 0 4px #3b82f620}
+.actions{display:flex;margin-top:-4px;margin-bottom:42px}button{border:0;border-radius:20px;padding:20px 28px;font-size:20px;font-weight:750;cursor:pointer}
+button.primary{background:#edf4ff;color:#2157c9}
+.result{background:linear-gradient(120deg,#142b49,#20466c);border-radius:36px;color:#fff;padding:clamp(26px,5vw,42px);min-height:300px}
+.result-top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#c9d8ec;font-weight:800;letter-spacing:.1em;font-size:17px}
+.live-dot{display:inline-block;width:14px;height:14px;background:#39d58a;border-radius:50%;margin-right:12px;box-shadow:0 0 0 8px #39d58a22;vertical-align:middle}
+.offset{color:#9dd7ff;letter-spacing:0;white-space:nowrap}
+#fijiTime{font-size:clamp(54px,12vw,100px);font-weight:850;letter-spacing:-.06em;line-height:1.1;margin-top:48px}
+#fijiDate{font-size:clamp(19px,3.5vw,27px);color:#d4e1f1;margin-top:12px}.zone{color:#91b1d0;font-size:18px;letter-spacing:.08em;margin-top:25px}
+.diff{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:34px 4px 0;color:#687c96;font-size:19px}.diff strong{color:#1c3150;text-align:right}
+.footer{text-align:center;color:#8798b0;font-size:18px;margin:38px 10px 0}
+@media(max-width:560px){body{padding:22px 12px}.hero{padding:20px 6px 32px}.eyebrow{margin-top:32px;font-size:13px}.panel{border-radius:28px;padding:22px 18px}.field{margin-bottom:27px}input{height:76px;border-radius:18px;padding:0 18px}.actions{margin-bottom:28px}button{font-size:17px;padding:17px 21px;border-radius:16px}.result{border-radius:26px;min-height:250px}.result-top{font-size:14px}#fijiTime{margin-top:38px}.diff{font-size:16px;padding-top:25px}.diff strong{text-align:left}.footer{font-size:15px}}
+</style></head><body><div class="wrap">
+<header class="hero"><div class="brand">IST <span>↔</span> FJT</div><div class="eyebrow">TIME ZONE CONVERTER</div><h1>India to <span>Fiji</span></h1><p class="subtitle">Convert India time to Suva time instantly, including the correct date.</p></header>
+<main class="panel">
+<div class="field"><label for="indiaDate">INDIA DATE</label><input id="indiaDate" type="date"></div>
+<div class="field"><label for="indiaTime">INDIA TIME</label><input id="indiaTime" type="time" step="60"></div>
+<div class="actions"><button class="primary" id="now">Use current India time</button></div>
+<section class="result" aria-live="polite"><div class="result-top"><div><span class="live-dot"></span>FIJI · SUVA</div><div class="offset" id="offset">—</div></div><div id="fijiTime">—</div><div id="fijiDate">Choose an India date and time</div><div class="zone">Pacific/Fiji</div></section>
+<div class="diff"><span>Time difference</span><strong id="difference">—</strong></div></main>
+<footer class="footer">Automatic daylight-saving adjustment · No sign-in · Works on mobile</footer></div>
+<script>
+const INDIA="Asia/Kolkata",FIJI="Pacific/Fiji",dateInput=document.getElementById("indiaDate"),timeInput=document.getElementById("indiaTime");
+function parts(date,zone){const p=new Intl.DateTimeFormat("en-CA",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).formatToParts(date);return Object.fromEntries(p.filter(x=>x.type!=="literal").map(x=>[x.type,x.value]));}
+function offsetMinutes(date,zone){const p=parts(date,zone),utc=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second);return Math.round((utc-date.getTime())/60000);}
+function offsetText(n){const sign=n>=0?"+":"−";n=Math.abs(n);return sign+Math.floor(n/60)+"h"+(n%60?" "+String(n%60).padStart(2,"0")+"m":"");}
+function convert(){if(!dateInput.value||!timeInput.value)return;const [y,mo,d]=dateInput.value.split("-").map(Number),[h,m]=timeInput.value.split(":").map(Number),instant=new Date(Date.UTC(y,mo-1,d,h,m)-330*60000),f=parts(instant,FIJI),delta=offsetMinutes(instant,FIJI)-330;
+document.getElementById("fijiTime").textContent=new Intl.DateTimeFormat("en-US",{timeZone:FIJI,hour:"numeric",minute:"2-digit",hour12:true}).format(instant).toLowerCase();
+document.getElementById("fijiDate").textContent=new Intl.DateTimeFormat("en-US",{timeZone:FIJI,weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(instant);
+document.getElementById("offset").textContent=offsetText(delta);const a=Math.abs(delta),hr=Math.floor(a/60),mn=a%60;document.getElementById("difference").textContent="Fiji is "+hr+" hour"+(hr===1?"":"s")+(mn?" "+mn+" minutes":"")+(delta>=0?" ahead":" behind");}
+function setNow(){const p=parts(new Date(),INDIA);dateInput.value=p.year+"-"+p.month+"-"+p.day;timeInput.value=p.hour+":"+p.minute;convert();}
+document.getElementById("now").addEventListener("click",setNow);dateInput.addEventListener("input",convert);timeInput.addEventListener("input",convert);setNow();
+</script></body></html>
